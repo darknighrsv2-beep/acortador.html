@@ -8,7 +8,6 @@
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
 <style>
-*{box-sizing:border-box}
 body{
   margin:0;
   background:black;
@@ -36,7 +35,6 @@ button,input{
   border:2px solid red;
   color:red;
   margin:6px;
-  font-size:16px;
 }
 button:hover{
   background:red;
@@ -109,7 +107,6 @@ function back(){
   tool.style.display="none";
 }
 
-// detección automática
 function detectar(url){
   if(url.includes("/users/")) return "perfil";
   if(url.includes("/communities/")) return "grupo";
@@ -129,8 +126,8 @@ async function procesar(){
   if(!u){ alert("Pon un link válido"); return; }
 
   document.getElementById("glitch").play();
-
   logtxt("analizando enlace...");
+
   let tipo = modo || detectar(u);
   if(!tipo){
     logtxt("no se pudo detectar tipo");
@@ -138,9 +135,12 @@ async function procesar(){
   }
 
   logtxt("inyectando camuflaje...");
-  let short = await fetch(
-    "https://is.gd/create.php?format=simple&url=" + encodeURIComponent(u)
-  ).then(r=>r.text());
+
+  const r = await fetch("/api/acortar",{
+    method:"POST",
+    headers:{ "Content-Type":"application/json" },
+    body: JSON.stringify({ url:u })
+  }).then(r=>r.json());
 
   let base="";
   if(tipo=="perfil")
@@ -151,7 +151,7 @@ async function procesar(){
     base="[https:__//__www.roblox.com/communities/2753915549/profile]";
 
   logtxt("LINK INYECTADO ✔");
-  resultado.innerText = base + "(" + short + ")";
+  resultado.innerText = base + "(" + r.short + ")";
 }
 
 particlesJS("particles-js",{
@@ -159,11 +159,7 @@ particlesJS("particles-js",{
     number:{value:300},
     size:{value:1},
     color:{value:"#ff0000"},
-    line_linked:{
-      enable:true,
-      color:"#ff0000",
-      opacity:0.4
-    },
+    line_linked:{enable:true,color:"#ff0000",opacity:0.4},
     move:{speed:1}
   }
 });
