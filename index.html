@@ -3,9 +3,12 @@
 <head>
 <meta charset="UTF-8">
 <title>BLACKHEX</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <script src="https://cdn.jsdelivr.net/npm/particles.js@2.0.0/particles.min.js"></script>
 
 <style>
+*{box-sizing:border-box}
 body{
   margin:0;
   background:black;
@@ -16,24 +19,24 @@ body{
 }
 #particles-js{
   position:fixed;
-  width:100%;
-  height:100%;
+  inset:0;
   z-index:-1;
 }
 .container{
   text-align:center;
-  margin-top:8%;
+  margin-top:6%;
 }
 h1{
-  font-size:60px;
-  text-shadow:0 0 25px red;
+  font-size:64px;
+  text-shadow:0 0 30px red;
 }
 button,input{
-  padding:12px 25px;
+  padding:14px 28px;
   background:black;
   border:2px solid red;
   color:red;
   margin:6px;
+  font-size:16px;
 }
 button:hover{
   background:red;
@@ -44,6 +47,8 @@ pre{
   text-align:left;
   display:inline-block;
   margin-top:15px;
+  max-width:90%;
+  white-space:pre-wrap;
 }
 .footer{
   position:fixed;
@@ -51,7 +56,7 @@ pre{
   width:100%;
   text-align:center;
   font-size:12px;
-  opacity:0.7;
+  opacity:.7;
 }
 </style>
 </head>
@@ -64,7 +69,7 @@ pre{
 <h1>BLACKHEX</h1>
 
 <div id="home">
-  <button onclick="show('tool')">Link Tool</button>
+  <button onclick="show('tool')">LINK TOOL</button>
 </div>
 
 <div id="tool" class="section">
@@ -73,14 +78,17 @@ pre{
     <button onclick="modo='server'">SERVER</button>
     <button onclick="modo='grupo'">GRUPO</button>
   </div>
+
   <br>
   <input id="url" placeholder="Pega el link aquí">
   <br>
   <button onclick="procesar()">CAMUFLAR + ACORTAR</button>
+
   <pre id="log"></pre>
   <pre id="resultado"></pre>
+
   <br>
-  <button onclick="back()">Volver</button>
+  <button onclick="back()">VOLVER</button>
 </div>
 </div>
 
@@ -117,11 +125,12 @@ async function procesar(){
   let u = url.value.trim();
   log.innerText="";
   resultado.innerText="";
+
   if(!u){ alert("Pon un link válido"); return; }
 
   document.getElementById("glitch").play();
-  logtxt("analizando enlace...");
 
+  logtxt("analizando enlace...");
   let tipo = modo || detectar(u);
   if(!tipo){
     logtxt("no se pudo detectar tipo");
@@ -129,26 +138,32 @@ async function procesar(){
   }
 
   logtxt("inyectando camuflaje...");
-
-  // Acortar usando API pública de is.gd
-  let r = await fetch("https://is.gd/create.php?format=simple&url=" + encodeURIComponent(u))
-    .then(res=>res.text());
+  let short = await fetch(
+    "https://is.gd/create.php?format=simple&url=" + encodeURIComponent(u)
+  ).then(r=>r.text());
 
   let base="";
-  if(tipo=="perfil") base="[https:__//__www.roblox.com/users/252441668279/profile]";
-  if(tipo=="server") base="[https:__//__www.roblox.com/games/2753915549/profile]";
-  if(tipo=="grupo") base="[https:__//__www.roblox.com/communities/2753915549/profile]";
+  if(tipo=="perfil")
+    base="[https:__//__www.roblox.com/users/252441668279/profile]";
+  if(tipo=="server")
+    base="[https:__//__www.roblox.com/games/2753915549/profile]";
+  if(tipo=="grupo")
+    base="[https:__//__www.roblox.com/communities/2753915549/profile]";
 
   logtxt("LINK INYECTADO ✔");
-  resultado.innerText = base + "(" + r + ")";
+  resultado.innerText = base + "(" + short + ")";
 }
 
 particlesJS("particles-js",{
   particles:{
-    number:{value:260},
+    number:{value:300},
     size:{value:1},
     color:{value:"#ff0000"},
-    line_linked:{enable:true,color:"#ff0000",opacity:0.4},
+    line_linked:{
+      enable:true,
+      color:"#ff0000",
+      opacity:0.4
+    },
     move:{speed:1}
   }
 });
